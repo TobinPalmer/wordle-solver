@@ -78,14 +78,25 @@ const getWords = async () => {
   );
 };
 
-// (() => {
-//   console.log("init");
-//   const startingWord = "SALET";
-//   startingWord.split("").forEach((letter) => {
-//     console.log(letter);
-//     pressKey(letter);
-//   });
-//   pressEnter();
-// })();
+(() => {
+  console.log("init");
+  const startingWord = "SALET";
+  startingWord.split("").forEach((letter) => {
+    console.log(letter);
+    pressKey(letter);
+  });
+  pressEnter();
+})();
 
-pressEnter();
+const checkNewWord = () => {
+  getWords().then((res) => {
+    res.text().then((words) => {
+      const wordList = words.split("\n");
+
+      wordList.forEach((word) => {
+        if (presentLetters.size === 0 || correctLetters.size === 0) return;
+      });
+      words[Math.floor(Math.random()) * words.length];
+    });
+  });
+};

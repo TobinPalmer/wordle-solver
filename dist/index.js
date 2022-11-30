@@ -64,4 +64,24 @@ const pressEnter = () => {
 const getWords = async () => {
     return await fetch("https://gist.githubusercontent.com/dracos/dd0668f281e685bad51479e5acaadb93/raw/ca9018b32e963292473841fb55fd5a62176769b5/valid-wordle-words.txt");
 };
-pressEnter();
+(() => {
+    console.log("init");
+    const startingWord = "SALET";
+    startingWord.split("").forEach((letter) => {
+        console.log(letter);
+        pressKey(letter);
+    });
+    pressEnter();
+})();
+const checkNewWord = () => {
+    getWords().then((res) => {
+        res.text().then((words) => {
+            const wordList = words.split("\n");
+            wordList.forEach((word) => {
+                if (presentLetters.size === 0 || correctLetters.size === 0)
+                    return;
+            });
+            words[Math.floor(Math.random()) * words.length];
+        });
+    });
+};
