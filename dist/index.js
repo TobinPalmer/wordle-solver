@@ -1,6 +1,31 @@
 "use strict";
-const presentLetters = new Set();
+const includedLetters = new Map();
 const correctLetters = new Map();
+const grayLetters = new Set([]);
+let GotWord = false;
+const GuessConstraints = [
+    {
+        correct: "a",
+        not: new Set([]),
+    },
+    {
+        correct: "",
+        not: new Set([]),
+    },
+    {
+        correct: "",
+        not: new Set([]),
+    },
+    {
+        correct: "",
+        not: new Set([]),
+    },
+    {
+        correct: "",
+        not: new Set([]),
+    },
+];
+const guessLetters = ["e"];
 const alphabet = new Set([
     "a",
     "b",
@@ -42,46 +67,52 @@ const pressKey = (key) => {
     document.querySelector(keyElement).click();
     console.log("pressed key", keyElement);
 };
-const checkIfPresent = () => document.querySelectorAll(".Tile-module_tile__3ayIZ").forEach((tile) => {
-    if (tile.dataset.state === "present") {
-        presentLetters.add(tile.textContent ?? "");
-        console.log(presentLetters);
-    }
-});
-const checkIfCorrect = () => {
-    document.querySelectorAll(".Tile-module_tile__3ayIZ").forEach((tile) => {
-        if (tile.dataset.state === "correct") {
-            correctLetters.set(tile.textContent ?? "", 0);
-            console.log(correctLetters);
-        }
-    });
-};
 const pressEnter = () => {
     document.querySelector('[data-key="↵"]').click();
-    checkIfPresent();
-    checkIfCorrect();
 };
 const getWords = async () => {
     return await fetch("https://gist.githubusercontent.com/dracos/dd0668f281e685bad51479e5acaadb93/raw/ca9018b32e963292473841fb55fd5a62176769b5/valid-wordle-words.txt");
 };
+const validWords = [];
+getWords().then((res) => res.text().then((words) => words.split("\n").forEach((word) => validWords.push(word))));
+const checkNewWord = () => {
+    getWords().then((res) => {
+        res.text().then((words) => {
+            const wordList = words.split("\n");
+            words[Math.floor(Math.random()) * words.length];
+        });
+    });
+};
+const removeWord = (index) => validWords.splice(index, 1);
+const filterGuesses = () => {
+    validWords.forEach((word, index) => {
+        for (const constraint of GuessConstraints) {
+            console.log("filtering word");
+            if (constraint.correct && word[index] !== constraint.correct) {
+                removeWord(index);
+                console.log("removed word because not t: ", word);
+                break;
+            }
+            if (constraint.not && constraint.not.has(word[index])) {
+                removeWord(index);
+                console.log("removed word because grey letters: ", word);
+                break;
+            }
+        }
+    });
+};
 (() => {
-    console.log("init");
     const startingWord = "SALET";
+    console.log("init");
     startingWord.split("").forEach((letter) => {
         console.log(letter);
         pressKey(letter);
     });
     pressEnter();
+    setTimeout(() => {
+        if (!GotWord) {
+            filterGuesses();
+            console.log(validWords);
+        }
+    }, 500);
 })();
-const checkNewWord = () => {
-    getWords().then((res) => {
-        res.text().then((words) => {
-            const wordList = words.split("\n");
-            wordList.forEach((word) => {
-                if (presentLetters.size === 0 || correctLetters.size === 0)
-                    return;
-            });
-            words[Math.floor(Math.random()) * words.length];
-        });
-    });
-};
